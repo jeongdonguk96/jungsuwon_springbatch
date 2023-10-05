@@ -21,8 +21,16 @@ public class JobConfiguration {
 
 
     @Bean
-    public Job helloJob() {
-        return jobBuilderFactory.get("job")
+    public Job batchjob3() {
+        return jobBuilderFactory.get("batchjob3")
+                .start(step1())
+                .next(step2())
+                .build();
+    }
+
+    @Bean
+    public Job batchjob4() {
+        return jobBuilderFactory.get("batchjob4")
                 .start(step1())
                 .next(step2())
                 .build();
@@ -34,8 +42,17 @@ public class JobConfiguration {
                 .tasklet(new Tasklet() {
                     @Override
                     public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
+//                        JobParameters jobParameters = stepContribution.getStepExecution().getJobExecution().getJobParameters();
+//                        String name = jobParameters.getString("name");
+//                        Long seq = jobParameters.getLong("seq");
+//                        Double age = jobParameters.getDouble("age");
+//                        Date date = jobParameters.getDate("date");
                         System.out.println("=======================");
                         System.out.println(" >> Hello Spring Batch 11111");
+//                        System.out.println("name = " + name);
+//                        System.out.println("seq = " + seq);
+//                        System.out.println("age = " + age);
+//                        System.out.println("date = " + date);
                         System.out.println("=======================");
                         return RepeatStatus.FINISHED;
                     }
