@@ -1,4 +1,4 @@
-package io.spring.springbatch;
+package io.spring.springbatch.job;
 
 import lombok.Data;
 

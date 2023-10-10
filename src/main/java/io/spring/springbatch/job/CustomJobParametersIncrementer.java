@@ -1,4 +1,4 @@
-package io.spring.springbatch;
+package io.spring.springbatch.job;
 
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;

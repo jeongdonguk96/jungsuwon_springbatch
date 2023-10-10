@@ -1,4 +1,4 @@
-package io.spring.springbatch;
+package io.spring.springbatch.job;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
@@ -11,10 +11,8 @@ import org.springframework.batch.core.job.flow.Flow;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
-@Configuration
+//@Configuration
 @RequiredArgsConstructor
 public class JobConfiguration {
 
@@ -22,7 +20,7 @@ public class JobConfiguration {
     private final StepBuilderFactory stepBuilderFactory;
 
 
-    @Bean
+//    @Bean
     public Job batchjob3() {
         return jobBuilderFactory.get("batchjob3")
                 .start(step1())
@@ -31,7 +29,7 @@ public class JobConfiguration {
                 .build();
     }
 
-    @Bean
+//    @Bean
     public Job batchjob4() {
         return jobBuilderFactory.get("batchjob4")
                 .start(flow())
@@ -41,7 +39,7 @@ public class JobConfiguration {
                 .build();
     }
 
-    @Bean
+//    @Bean
     public Step step1() {
         return stepBuilderFactory.get("step1")
                 .tasklet(new Tasklet() {
@@ -56,7 +54,7 @@ public class JobConfiguration {
                 .build();
     }
 
-    @Bean
+//    @Bean
     public Step step2() {
         return stepBuilderFactory.get("step2")
                 .tasklet(new Tasklet() {
@@ -71,7 +69,7 @@ public class JobConfiguration {
                 .build();
     }
 
-    @Bean
+//    @Bean
     public Step step3() {
         return stepBuilderFactory.get("step3")
                 .tasklet(new Tasklet() {
@@ -86,7 +84,7 @@ public class JobConfiguration {
                 .build();
     }
 
-    @Bean
+//    @Bean
     public Flow flow() {
         FlowBuilder<Flow> flowFlowBuilder = new FlowBuilder<>("flow");
 
