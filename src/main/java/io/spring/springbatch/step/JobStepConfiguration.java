@@ -23,7 +23,7 @@ public class JobStepConfiguration {
     private final StepBuilderFactory stepBuilderFactory;
 
 
-    @Bean
+//    @Bean
     public Job batchjob() {
         return jobBuilderFactory.get("jobBatchjob")
                 .start(step4(null))
@@ -32,7 +32,7 @@ public class JobStepConfiguration {
     }
 
     // TaskletStepBuilder
-    @Bean
+//    @Bean
     public Step step1() {
         return stepBuilderFactory.get("step1")
                 .tasklet((contribution, chunkContext) -> {
@@ -43,7 +43,7 @@ public class JobStepConfiguration {
     }
 
     // SimpleStepBuilder
-    @Bean
+//    @Bean
     public Step step2() {
         return stepBuilderFactory.get("step2")
                 .<String, String>chunk(3)
@@ -68,21 +68,21 @@ public class JobStepConfiguration {
                 .build();
     }
 
-    @Bean
+//    @Bean
     public Step step4(JobLauncher jobLauncher) {
         return stepBuilderFactory.get("step4")
                 .job(job())
                 .build();
     }
 
-    @Bean
+//    @Bean
     public Step step5() {
         return stepBuilderFactory.get("step5")
                 .flow(flow())
                 .build();
     }
 
-    @Bean
+//    @Bean
     public Job job() {
         return this.jobBuilderFactory.get("job")
                 .start(step1())
@@ -90,7 +90,7 @@ public class JobStepConfiguration {
                 .build();
     }
 
-    @Bean
+//    @Bean
     public Flow flow() {
         FlowBuilder<Flow> flowBuilder = new FlowBuilder<>("flow");
         flowBuilder.start(step2()).end();

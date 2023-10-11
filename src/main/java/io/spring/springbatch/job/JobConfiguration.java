@@ -11,8 +11,10 @@ import org.springframework.batch.core.job.flow.Flow;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-//@Configuration
+@Configuration
 @RequiredArgsConstructor
 public class JobConfiguration {
 
@@ -20,26 +22,21 @@ public class JobConfiguration {
     private final StepBuilderFactory stepBuilderFactory;
 
 
-//    @Bean
-    public Job batchjob3() {
-        return jobBuilderFactory.get("batchjob3")
-                .start(step1())
-                .next(step2())
-                .incrementer(new CustomJobParametersIncrementer())
+    @Bean
+    public Job batchjob() {
+        return jobBuilderFactory.get("batchjob")
+                .start(step1()) // step1을 실행한다.
+                .on("COMPLETED") // 실행결과가 성공이면
+                .to(step3()) // step3을 실행한다.
+                .from(step1())// step1의
+                .on("FAILED")// 실행결과가 실패면
+                .to(step2()) // step2을 실행한다.
+                .end() // FlowBuilder를 종료한다.
                 .build();
     }
 
-//    @Bean
-    public Job batchjob4() {
-        return jobBuilderFactory.get("batchjob4")
-                .start(flow())
-                .next(step3())
-                .end()
-//                .incrementer(new CustomJobParametersIncrementer())+
-                .build();
-    }
 
-//    @Bean
+    @Bean
     public Step step1() {
         return stepBuilderFactory.get("step1")
                 .tasklet(new Tasklet() {
@@ -51,10 +48,11 @@ public class JobConfiguration {
                         return RepeatStatus.FINISHED;
                     }
                 })
+                .allowStartIfComplete(true)
                 .build();
     }
 
-//    @Bean
+    @Bean
     public Step step2() {
         return stepBuilderFactory.get("step2")
                 .tasklet(new Tasklet() {
@@ -66,10 +64,11 @@ public class JobConfiguration {
                         return RepeatStatus.FINISHED;
                     }
                 })
+                .allowStartIfComplete(true)
                 .build();
     }
 
-//    @Bean
+    @Bean
     public Step step3() {
         return stepBuilderFactory.get("step3")
                 .tasklet(new Tasklet() {
@@ -81,17 +80,8 @@ public class JobConfiguration {
                         return RepeatStatus.FINISHED;
                     }
                 })
+                .allowStartIfComplete(true)
                 .build();
     }
 
-//    @Bean
-    public Flow flow() {
-        FlowBuilder<Flow> flowFlowBuilder = new FlowBuilder<>("flow");
-
-        flowFlowBuilder.start(step1())
-                .next(step2())
-                .end();
-
-        return flowFlowBuilder.build();
-    }
 }
