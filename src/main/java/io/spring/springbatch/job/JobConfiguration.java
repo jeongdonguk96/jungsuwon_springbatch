@@ -1,20 +1,19 @@
 package io.spring.springbatch.job;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.batch.core.*;
+import org.springframework.batch.core.Job;
+import org.springframework.batch.core.Step;
+import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.core.job.builder.FlowBuilder;
-import org.springframework.batch.core.job.flow.Flow;
-import org.springframework.batch.core.job.flow.FlowExecutionStatus;
-import org.springframework.batch.core.job.flow.JobExecutionDecider;
-import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
 
 @Configuration
 @RequiredArgsConstructor
@@ -26,20 +25,28 @@ public class JobConfiguration {
     @Bean
     public Job batchjob() {
         return jobBuilderFactory.get("batchjob")
-                .incrementer(new RunIdIncrementer())
-                .start(flow())
-                .end()
+                .start(step5("step 55555"))
+                .next(step2())
                 .build();
     }
 
     @Bean
-    public Flow flow() {
-        FlowBuilder<Flow> flowBuilder = new FlowBuilder<>("flow");
-        flowBuilder.start(step1())
-                .next(step2())
-                .end();
+    @JobScope
+    public Step step5(@Value("#{jobParameters['message']}") String message) {
+        System.out.println("message = " + message);
 
-        return flowBuilder.build();
+        return stepBuilderFactory.get("step55")
+                .tasklet(tasklet("job1"))
+                .build();
+    }
+
+    @Bean
+    @StepScope
+    public Tasklet tasklet(@Value("#{jobExecutionContext['name']}") String name) {
+        return (contribution, chunkContext) -> {
+            System.out.println(name);
+            return RepeatStatus.FINISHED;
+        };
     }
 
     @Bean
