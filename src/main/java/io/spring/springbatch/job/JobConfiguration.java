@@ -1,5 +1,9 @@
 package io.spring.springbatch.job;
 
+import io.spring.springbatch.item.CustomItemProcessor;
+import io.spring.springbatch.item.CustomItemReader;
+import io.spring.springbatch.item.CustomItemWriter;
+import io.spring.springbatch.item.Customer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -9,14 +13,13 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.support.ListItemReader;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.Arrays;
-import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
@@ -34,25 +37,30 @@ public class JobConfiguration {
     }
 
     @Bean
+    public ItemReader<Customer> itemReader() {
+        return new CustomItemReader(Arrays.asList(new Customer("user1"),
+                new Customer("user2"),
+                new Customer("user3")
+                ));
+    }
+
+    @Bean
+    public ItemProcessor<Customer, Customer> itemProcessor() {
+        return new CustomItemProcessor();
+    }
+
+    @Bean
+    public ItemWriter<Customer> itemWriter() {
+        return new CustomItemWriter();
+    }
+
+    @Bean
     public Step step1() {
         return stepBuilderFactory.get("step1")
-                .<String, String>chunk(5)
-                .reader(new ListItemReader<>(Arrays.asList("item1, item2, item3, item4, item5")))
-                .processor(new ItemProcessor<String, String>() {
-                    @Override
-                    public String process(String item) throws Exception {
-                        Thread.sleep(300);
-                        System.out.println("reader: item = " + item);
-                        return "my " + item;
-                    }
-                })
-                .writer(new ItemWriter<String>() {
-                    @Override
-                    public void write(List<? extends String> items) throws Exception {
-                        Thread.sleep(300);
-                        System.out.println("writer: items = " + items);
-                    }
-                })
+                .<Customer, Customer>chunk(3)
+                .reader(itemReader())
+                .processor(itemProcessor())
+                .writer(itemWriter())
                 .allowStartIfComplete(true)
                 .build();
     }
