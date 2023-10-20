@@ -9,4 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Customer {
     private String name;
+    private String year;
+    private int age;
 }

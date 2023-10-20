@@ -1,7 +1,8 @@
 package io.spring.springbatch.job;
 
+import io.spring.springbatch.flatfileitemreader.CustomLineMapper;
+import io.spring.springbatch.flatfileitemreader.CustomerFieldSetMapper;
 import io.spring.springbatch.item.CustomItemProcessor;
-import io.spring.springbatch.item.CustomItemReader;
 import io.spring.springbatch.item.CustomItemWriter;
 import io.spring.springbatch.item.Customer;
 import lombok.RequiredArgsConstructor;
@@ -15,11 +16,14 @@ import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.file.FlatFileItemReader;
+import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
+import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
+import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.Arrays;
+import org.springframework.core.io.ClassPathResource;
 
 @Configuration
 @RequiredArgsConstructor
@@ -37,11 +41,31 @@ public class JobConfiguration {
     }
 
     @Bean
+    public ItemReader DelimetedTokenizeritemReader() {
+        return new FlatFileItemReaderBuilder<Customer>()
+                .name("flatFileReader")
+                .resource(new ClassPathResource("customer.csv"))
+                .fieldSetMapper(new BeanWrapperFieldSetMapper<>())
+                .targetType(Customer.class)
+                .linesToSkip(1)
+                .delimited().delimiter(",")
+                .names("name", "year", "age")
+                .build();
+    }
+
+    @Bean
     public ItemReader<Customer> itemReader() {
-        return new CustomItemReader(Arrays.asList(new Customer("user1"),
-                new Customer("user2"),
-                new Customer("user3")
-                ));
+        FlatFileItemReader<Customer> itemReader = new FlatFileItemReader<>(); // 플랫파일아이템리더 인스턴스 생성
+        itemReader.setResource(new ClassPathResource("/customer.csv")); // 읽어들일 파일 설정
+
+        CustomLineMapper<Customer> lineMapper = new CustomLineMapper<>(); // 라인매퍼 인스턴스 생성
+        lineMapper.setLineTokenizer(new DelimitedLineTokenizer()); // 이용할 구분자 객체 설정
+        lineMapper.setFieldSetMapper(new CustomerFieldSetMapper()); // 필드셋 객체 설정
+
+        itemReader.setLineMapper(lineMapper); // 플랫파일아이템리더의 라인매퍼 설정
+        itemReader.setLinesToSkip(1); // 첫 번째 라인(컬럼명) 건너뛰기
+
+        return itemReader;
     }
 
     @Bean
@@ -57,11 +81,10 @@ public class JobConfiguration {
     @Bean
     public Step step1() {
         return stepBuilderFactory.get("step1")
-                .<Customer, Customer>chunk(3)
-                .reader(itemReader())
-                .processor(itemProcessor())
+                .<Customer, Customer>chunk(2)
+                .reader(DelimetedTokenizeritemReader())
                 .writer(itemWriter())
-                .allowStartIfComplete(true)
+//                .allowStartIfComplete(true)
                 .build();
     }
 
