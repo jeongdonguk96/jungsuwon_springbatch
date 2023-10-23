@@ -32,6 +32,7 @@ public class JobConfiguration {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
 
+
     @Bean
     public Job batchjob() {
         return jobBuilderFactory.get("batchjob")
