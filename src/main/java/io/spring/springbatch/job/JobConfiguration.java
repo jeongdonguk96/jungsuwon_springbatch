@@ -11,8 +11,8 @@ import org.springframework.batch.core.configuration.annotation.StepBuilderFactor
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.database.builder.JpaCursorItemReaderBuilder;
 import org.springframework.batch.item.database.builder.JpaItemWriterBuilder;
-import org.springframework.batch.item.database.builder.JpaPagingItemReaderBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -47,22 +47,21 @@ public class JobConfiguration {
     @Bean
     public Step step1() {
         return stepBuilderFactory.get("step1")
-                .<Customer, Customer2>chunk(10)
-                .reader(jpaPagingItemReader())
-                .processor(itemProcessor())
+                .<Customer, Customer2>chunk(1)
+                .reader(jpaCursorItemReader())
+                .processor(compositeItemProcessor())
                 .writer(jpaItemWriter())
                 .allowStartIfComplete(true)
                 .build();
     }
 
     @Bean
-    public ItemReader<Customer> jpaPagingItemReader() {
+    public ItemReader<Customer> jpaCursorItemReader() {
         HashMap<String, Object> parameters = new HashMap<>();
-        parameters.put("firstName", "A%");
+        parameters.put("firstName", "B%");
 
-        return new JpaPagingItemReaderBuilder<Customer>()
+        return new JpaCursorItemReaderBuilder<Customer>()
                 .name("jpaCursorItemReader")
-                .pageSize(10) // 가져올 데이터 갯수
                 .entityManagerFactory(entityManagerFactory) // EntityManager 설정
                 .queryString(sql3) // 실행할 jpql문
                 .parameterValues(parameters) // jpql문 내 인자
@@ -70,7 +69,7 @@ public class JobConfiguration {
     }
 
     @Bean
-    public ItemProcessor<Customer, Customer2> itemProcessor() {
+    public ItemProcessor<Customer, Customer2> compositeItemProcessor() {
         return new CustomItemProcessor();
     }
 
@@ -81,6 +80,11 @@ public class JobConfiguration {
                 .entityManagerFactory(entityManagerFactory)
                 .build();
     }
+
+//    @Bean
+//    public ItemProcessor<Customer, Customer2> customItemProcessor() {
+//        return new CustomItemProcessor();
+//    }
 
 //    @Bean
 //    public ItemWriter<? super Customer2> jdcbBatchItemWriter() {
@@ -141,12 +145,13 @@ public class JobConfiguration {
 //    }
 
 //    @Bean
-//    public ItemReader<Customer> jpaCursorItemReader() {
+//    public ItemReader<Customer> jpaPagingItemReader() {
 //        HashMap<String, Object> parameters = new HashMap<>();
-//        parameters.put("firstName", "A%");
+//        parameters.put("firstName", "B%");
 //
-//        return new JpaCursorItemReaderBuilder<Customer>()
+//        return new JpaPagingItemReaderBuilder<Customer>()
 //                .name("jpaCursorItemReader")
+//                .pageSize(1) // 가져올 데이터 갯수
 //                .entityManagerFactory(entityManagerFactory) // EntityManager 설정
 //                .queryString(sql3) // 실행할 jpql문
 //                .parameterValues(parameters) // jpql문 내 인자
