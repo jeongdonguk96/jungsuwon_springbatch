@@ -1,6 +1,6 @@
 //package io.spring.springbatch.flatfileitemreader;
 //
-//import io.spring.springbatch.item.Customer;
+//import io.spring.springbatch.domain.Customer;
 //import org.springframework.batch.item.file.mapping.FieldSetMapper;
 //import org.springframework.batch.item.file.transform.FieldSet;
 //import org.springframework.validation.BindException;

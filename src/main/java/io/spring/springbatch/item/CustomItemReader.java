@@ -1,5 +1,6 @@
 package io.spring.springbatch.item;
 
+import io.spring.springbatch.domain.Customer;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.NonTransientResourceException;
 import org.springframework.batch.item.ParseException;
