@@ -18,7 +18,6 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-import java.util.HashMap;
 
 @Configuration
 @RequiredArgsConstructor
@@ -47,7 +46,7 @@ public class JobConfiguration {
     @Bean
     public Step step1() {
         return stepBuilderFactory.get("step1")
-                .<Customer, Customer2>chunk(1)
+                .<Customer, Customer2>chunk(10)
                 .reader(jpaCursorItemReader())
                 .processor(compositeItemProcessor())
                 .writer(jpaItemWriter())
@@ -57,14 +56,14 @@ public class JobConfiguration {
 
     @Bean
     public ItemReader<Customer> jpaCursorItemReader() {
-        HashMap<String, Object> parameters = new HashMap<>();
-        parameters.put("firstName", "B%");
+//        HashMap<String, Object> parameters = new HashMap<>();
+//        parameters.put("firstName", "B%");
 
         return new JpaCursorItemReaderBuilder<Customer>()
                 .name("jpaCursorItemReader")
                 .entityManagerFactory(entityManagerFactory) // EntityManager 설정
-                .queryString(sql3) // 실행할 jpql문
-                .parameterValues(parameters) // jpql문 내 인자
+                .queryString(sql4) // 실행할 jpql문
+//                .parameterValues(parameters) // jpql문 내 인자
                 .build();
     }
 
