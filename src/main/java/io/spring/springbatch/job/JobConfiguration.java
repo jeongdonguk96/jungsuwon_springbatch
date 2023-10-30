@@ -3,6 +3,7 @@ package io.spring.springbatch.job;
 import io.spring.springbatch.domain.Customer;
 import io.spring.springbatch.domain.Customer2;
 import io.spring.springbatch.item.CustomItemProcessor;
+import io.spring.springbatch.item.CustomItemProcessor2;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -13,11 +14,15 @@ import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.builder.JpaCursorItemReaderBuilder;
 import org.springframework.batch.item.database.builder.JpaItemWriterBuilder;
+import org.springframework.batch.item.support.CompositeItemProcessor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
@@ -45,19 +50,19 @@ public class JobConfiguration {
 
     @Bean
     public Step step1() {
-        return stepBuilderFactory.get("step1")
+        return stepBuilderFactory.get("step123")
                 .<Customer, Customer2>chunk(10)
                 .reader(jpaCursorItemReader())
                 .processor(compositeItemProcessor())
                 .writer(jpaItemWriter())
-                .allowStartIfComplete(true)
+//                .allowStartIfComplete(true)
                 .build();
     }
 
     @Bean
     public ItemReader<Customer> jpaCursorItemReader() {
-//        HashMap<String, Object> parameters = new HashMap<>();
-//        parameters.put("firstName", "B%");
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("firstName", "B%");
 
         return new JpaCursorItemReaderBuilder<Customer>()
                 .name("jpaCursorItemReader")
@@ -68,8 +73,25 @@ public class JobConfiguration {
     }
 
     @Bean
-    public ItemProcessor<Customer, Customer2> compositeItemProcessor() {
+    public CompositeItemProcessor compositeItemProcessor() {
+        List<ItemProcessor> delegates = new ArrayList<>();
+        delegates.add(itemProcessor());
+        delegates.add(itemProcessor2());
+
+        CompositeItemProcessor itemProcessor = new CompositeItemProcessor<>();
+        itemProcessor.setDelegates(delegates);
+
+        return itemProcessor;
+    }
+
+    @Bean
+    public ItemProcessor<Customer, Customer2> itemProcessor() {
         return new CustomItemProcessor();
+    }
+
+    @Bean
+    public ItemProcessor<Customer2, Customer2> itemProcessor2() {
+        return new CustomItemProcessor2();
     }
 
     @Bean
