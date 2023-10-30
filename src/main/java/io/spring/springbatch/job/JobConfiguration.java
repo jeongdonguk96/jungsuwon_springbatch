@@ -41,7 +41,7 @@ public class JobConfiguration {
     private final String sql5 = "INSERT INTO customer2 VALUES (:id, :firstName, :lastName, :birthDate)";
 
 
-    @Bean
+//    @Bean
     public Job batchjob() {
         return jobBuilderFactory.get("batchjob")
                 .start(step1())
