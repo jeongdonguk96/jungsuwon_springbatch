@@ -21,7 +21,7 @@ public class JobConfiguration3 {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
 
-    @Bean
+//    @Bean
     public Job batchjob3() {
         return jobBuilderFactory.get("batchjob3")
                 .start(step3())
