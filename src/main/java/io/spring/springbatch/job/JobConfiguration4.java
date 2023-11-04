@@ -9,6 +9,7 @@ import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.support.ListItemReader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.retry.RetryPolicy;
 import org.springframework.retry.backoff.FixedBackOffPolicy;
 import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
@@ -25,7 +26,7 @@ public class JobConfiguration4 {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
 
-    @Bean
+//    @Bean
     public Job batchjob4() {
         return jobBuilderFactory.get("batchjob4")
                 .start(step4())
@@ -42,6 +43,7 @@ public class JobConfiguration4 {
                 .faultTolerant()
                 .skip(RuntimeException.class)
                 .skipLimit(2)
+                .retryPolicy(retryPolicy())
                 .retry(RuntimeException.class)
                 .retryLimit(2)
                 .allowStartIfComplete(true)
@@ -61,6 +63,14 @@ public class JobConfiguration4 {
     @Bean
     public ItemProcessor<? super String, String> processor() {
         return new RetryItemProcessor();
+    }
+
+    @Bean
+    public RetryPolicy retryPolicy() {
+        Map<Class<? extends Throwable>, Boolean> excepttionClass = new HashMap<>();
+        excepttionClass.put(RuntimeException.class, true);
+
+        return new SimpleRetryPolicy(2, excepttionClass);
     }
 
     @Bean
