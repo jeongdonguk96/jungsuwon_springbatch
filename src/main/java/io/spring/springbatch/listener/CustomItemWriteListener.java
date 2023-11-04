@@ -14,7 +14,7 @@ public class CustomItemWriteListener implements ItemWriteListener<Customer2> {
 
     @Override
     public void afterWrite(List<? extends Customer2> items) {
-        System.out.println("Thread : " + Thread.currentThread().getName() + ", write items : " + items.size());
+        System.out.println("Thread : " + Thread.currentThread().getName() + ", write item size : " + items.size());
     }
 
     @Override

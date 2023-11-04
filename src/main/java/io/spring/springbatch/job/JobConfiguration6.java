@@ -37,6 +37,7 @@ public class JobConfiguration6 {
     private final StepBuilderFactory stepBuilderFactory;
     private final DataSource dataSource;
 
+    private final String sql1 = "SELECT * FROM customer";
     private final String sql5 = "INSERT INTO customer2 VALUES (:id, :firstName, :lastName, :birthDate)";
 
     @Bean
@@ -49,8 +50,8 @@ public class JobConfiguration6 {
 
     @Bean
     public Step step6() throws Exception {
-        return stepBuilderFactory.get("step6")
-                .<Customer, Customer2>chunk(100)
+        return stepBuilderFactory.get("step66")
+                .<Customer, Customer2>chunk(10)
                 .reader(jdbcPagingItemReader())
                 .listener(new CustomItemReadListener())
                 .processor(new CustomItemProcessor3())
@@ -58,6 +59,7 @@ public class JobConfiguration6 {
                 .writer(jdbcBatchItemWriter())
                 .listener(new CustomItemWriteListener())
                 .taskExecutor(taskExecutor()) // 비동기적인 멀티 스레드 적용
+                .allowStartIfComplete(true)
                 .build();
     }
 
@@ -65,12 +67,24 @@ public class JobConfiguration6 {
     public ItemReader<Customer> jdbcPagingItemReader() throws Exception {
         return new JdbcPagingItemReaderBuilder<Customer>()
                 .name("jdbcPagingItemReader")
-                .pageSize(300) // 사이즈 설정
+                .pageSize(10) // 사이즈 설정
                 .dataSource(dataSource) // DB 설정
                 .rowMapper(new BeanPropertyRowMapper<>(Customer.class)) // 매핑할 클래스 설정
                 .queryProvider(pagingQueryProvider()) // PagingQueryProvider 설정
                 .build();
     }
+
+//    @Bean
+//    @Synchronized
+//    public ItemReader<Customer> jdbcCursorItemReader() {
+//        return new JdbcCursorItemReaderBuilder<Customer>()
+//                .name("jdbcCursorItemReader")
+//                .fetchSize(10) // 한 번에 가져올 데이터 수
+//                .sql(sql1)
+//                .beanRowMapper(Customer.class) // 변환할 클래스
+//                .dataSource(dataSource) // DB 설정
+//                .build();
+//    }
 
     @Bean
     public PagingQueryProvider pagingQueryProvider() throws Exception {
@@ -98,8 +112,8 @@ public class JobConfiguration6 {
     @Bean
     public TaskExecutor taskExecutor() {
         ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
-        taskExecutor.setCorePoolSize(4);
-        taskExecutor.setMaxPoolSize(8);
+        taskExecutor.setCorePoolSize(3);
+        taskExecutor.setMaxPoolSize(3);
         taskExecutor.setThreadNamePrefix("async-thread");
 
         return taskExecutor;
