@@ -40,7 +40,7 @@ public class JobConfiguration6 {
     private final String sql1 = "SELECT * FROM customer";
     private final String sql5 = "INSERT INTO customer2 VALUES (:id, :firstName, :lastName, :birthDate)";
 
-    @Bean
+//    @Bean
     public Job batchjob6() throws Exception {
         return jobBuilderFactory.get("batchjob6")
                 .start(step6())
