@@ -63,7 +63,7 @@ public class JobConfiguration6 {
                 .build();
     }
 
-    @Bean
+//    @Bean
     public ItemReader<Customer> jdbcPagingItemReader() throws Exception {
         return new JdbcPagingItemReaderBuilder<Customer>()
                 .name("jdbcPagingItemReader")

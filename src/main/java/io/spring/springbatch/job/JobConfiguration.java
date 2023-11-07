@@ -59,7 +59,7 @@ public class JobConfiguration {
                 .build();
     }
 
-    @Bean
+//    @Bean
     public ItemReader<Customer> jpaCursorItemReader() {
         HashMap<String, Object> parameters = new HashMap<>();
         parameters.put("firstName", "B%");

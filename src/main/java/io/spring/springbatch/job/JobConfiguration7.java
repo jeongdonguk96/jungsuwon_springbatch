@@ -23,7 +23,7 @@ public class JobConfiguration7 {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
 
-    @Bean
+//    @Bean
     public Job batchjob7() {
         return jobBuilderFactory.get("batchjob77")
                 .incrementer(new RunIdIncrementer())

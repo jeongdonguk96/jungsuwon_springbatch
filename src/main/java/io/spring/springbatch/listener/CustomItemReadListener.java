@@ -12,7 +12,8 @@ public class CustomItemReadListener implements ItemReadListener<Customer> {
 
     @Override
     public void afterRead(Customer item) {
-        System.out.println("Thread : " + Thread.currentThread().getName() + ", read item : " + item.getId());
+//        System.out.println("Thread : " + Thread.currentThread().getName() + ", read item : " + item.getId());
+        System.out.println("Thread : " + Thread.currentThread().getName() + ", item.getId() = " + item.getId());
     }
 
     @Override
