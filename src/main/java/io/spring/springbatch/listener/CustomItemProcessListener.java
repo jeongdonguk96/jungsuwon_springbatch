@@ -1,23 +1,21 @@
 package io.spring.springbatch.listener;
 
-import io.spring.springbatch.domain.Customer;
-import io.spring.springbatch.domain.Customer2;
 import org.springframework.batch.core.ItemProcessListener;
 
-public class CustomItemProcessListener implements ItemProcessListener<Customer, Customer2> {
+public class CustomItemProcessListener implements ItemProcessListener<Integer, String> {
 
     @Override
-    public void beforeProcess(Customer item) {
-
+    public void beforeProcess(Integer item) {
+        System.out.println(">>>>> Before Process");
     }
 
     @Override
-    public void afterProcess(Customer item, Customer2 result) {
-        System.out.println("Thread : " + Thread.currentThread().getName() + ", process item : " + item.getId());
+    public void afterProcess(Integer item, String result) {
+        System.out.println(">>>>> After Process");
     }
 
     @Override
-    public void onProcessError(Customer item, Exception e) {
-
+    public void onProcessError(Integer item, Exception e) {
+        System.out.println(">>>>> On Process Error");
     }
 }
