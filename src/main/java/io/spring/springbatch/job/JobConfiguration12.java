@@ -25,7 +25,7 @@ public class JobConfiguration12 {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
 
-    @Bean
+//    @Bean
     public Job batchjob12() throws Exception {
         return jobBuilderFactory.get("batchjob12")
                 .incrementer(new RunIdIncrementer())

@@ -49,7 +49,7 @@ public class JobConfiguration11 {
     @Bean
     public Step step11() throws Exception {
         return stepBuilderFactory.get("step11")
-                .<Customer, Customer2>chunk(10)
+                .<Customer, Customer2>chunk(100)
                 .listener(new CustomChunkListener())
                 .reader(jdbcPagingItemReader())
                 .listener(new CustomItemReadListener())
@@ -65,7 +65,7 @@ public class JobConfiguration11 {
     public ItemReader<Customer> jdbcPagingItemReader() throws Exception {
         return new JdbcPagingItemReaderBuilder<Customer>()
                 .name("jdbcPagingItemReader")
-                .pageSize(10) // 사이즈 설정
+                .pageSize(100) // 사이즈 설정
                 .dataSource(dataSource) // DB 설정
                 .rowMapper(new BeanPropertyRowMapper<>(Customer.class)) // 매핑할 클래스 설정
                 .queryProvider(pagingQueryProvider()) // PagingQueryProvider 설정
