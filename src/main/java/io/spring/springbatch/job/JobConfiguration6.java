@@ -86,7 +86,7 @@ public class JobConfiguration6 {
 //                .build();
 //    }
 
-    @Bean
+//    @Bean
     public PagingQueryProvider pagingQueryProvider() throws Exception {
         Map<String, Order> sortKeys = new HashMap<>();
         sortKeys.put("id", Order.ASCENDING);
@@ -100,7 +100,7 @@ public class JobConfiguration6 {
         return queryProvider.getObject();
     }
 
-    @Bean
+//    @Bean
     public JdbcBatchItemWriter<Customer2> jdbcBatchItemWriter() {
         return new JdbcBatchItemWriterBuilder<Customer2>()
                 .dataSource(dataSource)

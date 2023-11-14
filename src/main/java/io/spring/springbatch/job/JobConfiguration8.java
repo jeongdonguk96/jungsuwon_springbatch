@@ -8,7 +8,6 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.item.ItemReader;
@@ -18,7 +17,6 @@ import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilde
 import org.springframework.batch.item.database.builder.JdbcPagingItemReaderBuilder;
 import org.springframework.batch.item.database.support.MySqlPagingQueryProvider;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -48,7 +46,7 @@ public class JobConfiguration8 {
                 .build();
     }
 
-    @Bean
+//    @Bean
     public Step masterStep1() {
         return stepBuilderFactory.get("masterStep1")
                 .partitioner(slaveStep1().getName(), partitioner())
@@ -58,7 +56,7 @@ public class JobConfiguration8 {
                 .build();
     }
 
-    @Bean
+//    @Bean
     public Step slaveStep1() {
         return stepBuilderFactory.get("slaveStep1")
                 .<Customer, Customer2>chunk(100)
@@ -68,7 +66,7 @@ public class JobConfiguration8 {
                 .build();
     }
 
-    @Bean
+//    @Bean
     public Partitioner partitioner() {
         ColumnRangePartitioner partitioner = new ColumnRangePartitioner();
         partitioner.setDataSource(dataSource);
@@ -78,8 +76,8 @@ public class JobConfiguration8 {
         return partitioner;
     }
 
-    @Bean
-    @StepScope
+//    @Bean
+//    @StepScope
     public ItemReader<Customer> jdbcPagingItemReader(
             @Value("#{stepExecutionContext['minValue']}") Long minValue,
             @Value("#{stepExecutionContext['maxValue']}") Long maxValue) {
@@ -102,8 +100,8 @@ public class JobConfiguration8 {
                 .build();
     }
 
-    @Bean
-    @StepScope
+//    @Bean
+//    @StepScope
     public ItemWriter<? super Customer2> jdcbBatchItemWriter() {
         return new JdbcBatchItemWriterBuilder<>()
                 .dataSource(dataSource)

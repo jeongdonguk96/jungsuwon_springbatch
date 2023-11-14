@@ -1,8 +1,9 @@
 package io.spring.springbatch.listener;
 
+import io.spring.springbatch.domain.Customer;
 import org.springframework.batch.core.ItemReadListener;
 
-public class CustomItemReadListener implements ItemReadListener<Integer> {
+public class CustomItemReadListener implements ItemReadListener<Customer> {
 
     @Override
     public void beforeRead() {
@@ -10,7 +11,7 @@ public class CustomItemReadListener implements ItemReadListener<Integer> {
     }
 
     @Override
-    public void afterRead(Integer item) {
+    public void afterRead(Customer item) {
         System.out.println(">>>>> After Read");
     }
 
